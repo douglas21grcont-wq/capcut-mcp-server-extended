@@ -1,79 +1,79 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Este arquivo fornece orientação ao Claude Code (claude.ai/code) ao trabalhar com código neste repositório.
 
-## Project Overview
+## Visão Geral do Projeto
 
-**capcut-mcp-server-extended** is a Model Context Protocol (MCP) server that bridges AI assistants
-(Claude, etc.) with CapCut Pro video editing via a VectCutAPI backend. It is a fork of
-`atx-guy/capcut-mcp-server` extended toward a professional video automation tool, with a focus on
-**talking head / reels content**: vertical 1080×1920 videos, auto-subtitles, animated text, and
-composable presets that collapse multi-step workflows into a single tool call.
+**capcut-mcp-server-extended** é um servidor Model Context Protocol (MCP) que conecta assistentes de IA
+(Claude, etc.) à edição de vídeo do CapCut Pro através de um backend VectCutAPI. É um fork do
+`atx-guy/capcut-mcp-server` estendido em direção a uma ferramenta profissional de automação de vídeo, com foco em
+**talking head / conteúdo para reels**: vídeos verticais 1080×1920, legendas automáticas, texto animado e
+presets composáveis que condensam fluxos de vários passos em uma única chamada de ferramenta.
 
-The end goal is to let an AI assistant produce a fully-edited short video by issuing a handful of
-MCP tool calls — no manual CapCut interaction required.
+O objetivo final é permitir que um assistente de IA produza um vídeo curto totalmente editado emitindo
+algumas chamadas de ferramenta MCP — sem interação manual com o CapCut.
 
 ---
 
-## Commands
+## Comandos
 
 ```bash
-# Build (compile TypeScript → dist/, make dist/index.js executable)
+# Build (compila TypeScript → dist/, torna dist/index.js executável)
 npm run build
 
-# Development (watch mode, recompiles on change)
+# Desenvolvimento (modo watch, recompila a cada alteração)
 npm run dev
 
-# Run the compiled server
+# Executa o servidor compilado
 npm start
 ```
 
-No test scripts are configured. The server starts and communicates over stdio (default) or HTTP.
-Always run `npm run build` after every code change and confirm zero errors before committing.
+Nenhum script de teste está configurado. O servidor inicia e se comunica via stdio (padrão) ou HTTP.
+Sempre execute `npm run build` após cada alteração de código e confirme zero erros antes de commitar.
 
 ---
 
-## Architecture
+## Arquitetura
 
-**Transport modes** (set via `TRANSPORT` env var):
-- `stdio` (default) — for Claude Desktop / local MCP clients
-- `http` — listens on `PORT` (default 3000)
+**Modos de transporte** (definidos pela variável de ambiente `TRANSPORT`):
+- `stdio` (padrão) — para Claude Desktop / clientes MCP locais
+- `http` — escuta em `PORT` (padrão 3000)
 
-**Key env vars**: `CAPCUT_API_URL` (default `http://localhost:9001`), `PORT`, `TRANSPORT`
+**Variáveis de ambiente principais**: `CAPCUT_API_URL` (padrão `http://localhost:9001`), `PORT`, `TRANSPORT`
 
-**VectCutAPI backend**: runs at `http://localhost:9001`. Useful endpoints:
-- `GET /get_font_types` — returns the full list of supported font names
+**Backend VectCutAPI**: roda em `http://localhost:9001`. Endpoints úteis:
+- `GET /get_font_types` — retorna a lista completa de nomes de fontes suportadas
 - `POST /create_draft`, `/add_video`, `/add_text`, `/add_keyframe`, `/save_draft`, etc.
 
-### Data flow
+### Fluxo de dados
 
 ```
 MCP Client
-  → src/tools/index.ts          (tool registration + Zod validation)
-  → src/tools/presets.ts        (high-level composite tools — Phase 3+)
-  → src/services/api-client.ts  (axios singleton, 60 s timeout)
-  → VectCutAPI backend          (http://localhost:9001)
+  → src/tools/index.ts          (registro de ferramentas + validação Zod)
+  → src/tools/presets.ts        (ferramentas compostas de alto nível — Fase 3+)
+  → src/services/api-client.ts  (singleton axios, timeout de 60 s)
+  → Backend VectCutAPI          (http://localhost:9001)
 ```
 
-### Source layout
+### Layout do código-fonte
 
-| File / Dir | Role |
+| Arquivo / Pasta | Função |
 |---|---|
-| `src/index.ts` | Entry point; stdio/HTTP transport setup — **do not modify** |
-| `src/tools/index.ts` | All 13 MCP tool definitions; `formatResponse` / `handleError` helpers |
-| `src/tools/presets.ts` | High-level composite tools (Phase 3+) |
-| `src/schemas/index.ts` | Zod schemas for every base tool input |
-| `src/services/api-client.ts` | Singleton `apiClient`; maps tool calls → POST endpoints — **do not modify** |
-| `src/types.ts` | TypeScript interfaces (`DraftConfig`, `VideoTrack`, `ResponseFormat`, …) |
-| `src/constants.ts` | `API_BASE_URL`, defaults, supported formats, effects, transitions |
-| `src/presets/typography.ts` | **[Phase 1 ✅]** Three named text styles; font = `Poppins_Bold` |
-| `src/presets/animations.ts` | **[Phase 2 ✅]** Keyframe animation sequences (`popInUpper`) |
-| `src/utils/validators.ts` | **[Phase 5]** Path validation, Windows↔Unix helpers |
-| `utils_py/transcribe_audio.py` | Whisper word-level transcription; outputs JSON word list |
-| `utils_py/inspect_draft.py` | Reads `draft_content.json`; extracts audio path, duration, fps |
-| `utils_py/validate_project.py` | Checks that all media files referenced in a draft exist |
+| `src/index.ts` | Ponto de entrada; configuração de transporte stdio/HTTP — **não modificar** |
+| `src/tools/index.ts` | Todas as 13 definições de ferramentas MCP; helpers `formatResponse` / `handleError` |
+| `src/tools/presets.ts` | Ferramentas compostas de alto nível (Fase 3+) |
+| `src/schemas/index.ts` | Schemas Zod para toda entrada de ferramenta base |
+| `src/services/api-client.ts` | `apiClient` singleton; mapeia chamadas de ferramenta → endpoints POST — **não modificar** |
+| `src/types.ts` | Interfaces TypeScript (`DraftConfig`, `VideoTrack`, `ResponseFormat`, …) |
+| `src/constants.ts` | `API_BASE_URL`, valores padrão, formatos suportados, efeitos, transições |
+| `src/presets/typography.ts` | **[Fase 1 ✅]** Três estilos de texto nomeados; fonte = `Poppins_Bold` |
+| `src/presets/animations.ts` | **[Fase 2 ✅]** Sequências de animação por keyframe (`popInUpper`) |
+| `src/utils/validators.ts` | **[Fase 5]** Validação de caminhos, helpers Windows↔Unix |
+| `utils_py/transcribe_audio.py` | Transcrição Whisper com timing por palavra; gera lista JSON de palavras |
+| `utils_py/inspect_draft.py` | Lê `draft_content.json`; extrai caminho do áudio, duração e fps |
+| `utils_py/validate_project.py` | Verifica se todos os arquivos de mídia referenciados num draft existem |
 
-### 13 MCP tools
+### 13 ferramentas MCP
 
 ```
 capcut_create_draft
@@ -82,131 +82,131 @@ capcut_create_draft
   → capcut_add_effect / capcut_add_sticker
   → capcut_save_draft
 
-capcut_get_duration          (read-only — queries media metadata)
-capcut_add_animated_text     (add_text + keyframe animation in one call)
-capcut_edit_draft_words      (full pipeline: create draft → add video → add words → save)
+capcut_get_duration          (somente leitura — consulta metadados de mídia)
+capcut_add_animated_text     (add_text + animação por keyframe numa única chamada)
+capcut_edit_draft_words      (pipeline completo: cria draft → adiciona vídeo → adiciona palavras → salva)
 ```
 
-All tools accept `response_format: 'markdown' | 'json'`.
-Markdown uses `formatResponse()` for human-readable output; JSON returns `structuredContent`.
+Todas as ferramentas aceitam `response_format: 'markdown' | 'json'`.
+Markdown usa `formatResponse()` para saída legível por humanos; JSON retorna `structuredContent`.
 
 ---
 
-## Code Conventions
+## Convenções de Código
 
-- **TypeScript strict mode** — `strict: true`, `noUnusedLocals`, `noUnusedParameters`,
-  `noImplicitReturns` are all enabled in `tsconfig.json`. Avoid `any`; use typed generics or
-  `unknown` + type guards when the shape is truly dynamic.
-- **ESM modules** — `"type": "module"` in package.json. All local imports must include the `.js`
-  extension (even for `.ts` source files). Example: `import { foo } from './bar.js'`.
-- **Tool naming** — all MCP tools use `snake_case` with the `capcut_` prefix.
-- **Schema-first** — every tool input must have a matching Zod schema exported from
-  `src/schemas/index.ts` (base tools) or co-located with the preset file (preset tools).
-- **Preset exports** — each preset file exports:
-  1. A `const` object with the preset values (e.g. `TYPOGRAPHY_STYLES`).
-  2. A Zod schema derived from those values (e.g. `TypographyStyleNameSchema`).
-  3. The inferred TypeScript type (e.g. `type TypographyStyleName`).
-- **Comments in English** — all inline comments, JSDoc, and commit messages in English.
-- **No modification of stable files** — `src/index.ts` and `src/services/api-client.ts` are
-  stable; do not touch them unless there is a breaking backend change.
-- **Build gate** — `npm run build` must pass with zero errors after every change.
+- **Modo estrito do TypeScript** — `strict: true`, `noUnusedLocals`, `noUnusedParameters`,
+  `noImplicitReturns` estão todos habilitados em `tsconfig.json`. Evitar `any`; usar generics tipados ou
+  `unknown` + type guards quando o formato for realmente dinâmico.
+- **Módulos ESM** — `"type": "module"` no package.json. Todos os imports locais devem incluir a extensão
+  `.js` (mesmo para arquivos de origem `.ts`). Exemplo: `import { foo } from './bar.js'`.
+- **Nomenclatura de ferramentas** — todas as ferramentas MCP usam `snake_case` com o prefixo `capcut_`.
+- **Schema primeiro** — toda entrada de ferramenta deve ter um schema Zod correspondente exportado de
+  `src/schemas/index.ts` (ferramentas base) ou colocado junto do arquivo de preset (ferramentas de preset).
+- **Exports de preset** — cada arquivo de preset exporta:
+  1. Um objeto `const` com os valores do preset (ex.: `TYPOGRAPHY_STYLES`).
+  2. Um schema Zod derivado desses valores (ex.: `TypographyStyleNameSchema`).
+  3. O tipo TypeScript inferido (ex.: `type TypographyStyleName`).
+- **Comentários em inglês** — todos os comentários inline, JSDoc e mensagens de commit em inglês.
+- **Nenhuma modificação de arquivos estáveis** — `src/index.ts` e `src/services/api-client.ts` são
+  estáveis; não tocar neles a menos que haja uma alteração de backend que quebre a compatibilidade.
+- **Gate de build** — `npm run build` deve passar com zero erros após cada alteração.
 
-### Adding a new base tool
+### Adicionando uma nova ferramenta base
 
-1. Add types to `src/types.ts` if needed.
-2. Add a Zod schema + inferred type to `src/schemas/index.ts`.
-3. Add the API method to `src/services/api-client.ts`.
-4. Register the tool inside `registerTools()` in `src/tools/index.ts`.
-5. Run `npm run build`.
+1. Adicionar tipos em `src/types.ts` se necessário.
+2. Adicionar um schema Zod + tipo inferido em `src/schemas/index.ts`.
+3. Adicionar o método de API em `src/services/api-client.ts`.
+4. Registrar a ferramenta dentro de `registerTools()` em `src/tools/index.ts`.
+5. Executar `npm run build`.
 
-### Adding a new preset/composite tool
+### Adicionando uma nova ferramenta de preset/composta
 
-1. Define the preset data in the appropriate `src/presets/*.ts` file.
-2. Add its Zod schema and TypeScript type there too.
-3. Register the tool in `src/tools/presets.ts` (create the file if needed).
-4. Import and call `registerPresetTools(server)` from `src/index.ts` if not already done.
-5. Run `npm run build`.
+1. Definir os dados do preset no arquivo apropriado em `src/presets/*.ts`.
+2. Adicionar também seu schema Zod e tipo TypeScript lá.
+3. Registrar a ferramenta em `src/tools/presets.ts` (criar o arquivo se necessário).
+4. Importar e chamar `registerPresetTools(server)` a partir de `src/index.ts`, se ainda não estiver feito.
+5. Executar `npm run build`.
 
 ---
 
-## Sistema de tipografía y animaciones
+## Sistema de tipografia e animações
 
-Cuando el usuario pida agregar texto a un clip, SIEMPRE usar
-`capcut_add_animated_text` en lugar de `capcut_add_text`.
+Quando o usuário pedir para adicionar texto a um clipe, SEMPRE usar
+`capcut_add_animated_text` em vez de `capcut_add_text`.
 
-### Estilos disponibles (`typography_style`)
+### Estilos disponíveis (`typography_style`)
 
-Definidos en `src/presets/typography.ts`. Los tres usan `Poppins_Bold` como fuente.
+Definidos em `src/presets/typography.ts`. Os três usam `Poppins_Bold` como fonte.
 
-| Nombre | Color | Stroke | Shadow | Cuándo usarlo |
+| Nome | Cor | Stroke | Shadow | Quando usar |
 |---|---|---|---|---|
-| `defaultTypeWhite` | `#ecebeb` | negro, thickness=40 | sí | Uso general — fondo oscuro |
-| `defaultTypeBlack` | `#000000` | no | no | Fondos claros |
-| `defaultTypeRed` | `#aa1a1a` | no | no | Énfasis, alertas, labels |
+| `defaultTypeWhite` | `#ecebeb` | preto, thickness=40 | sim | Uso geral — fundo escuro |
+| `defaultTypeBlack` | `#000000` | não | não | Fundos claros |
+| `defaultTypeRed` | `#aa1a1a` | não | não | Ênfase, alertas, labels |
 
-Si el usuario no especifica estilo, usar `defaultTypeWhite`.
+Se o usuário não especificar um estilo, usar `defaultTypeWhite`.
 
-### Fuentes soportadas por la API
+### Fontes suportadas pela API
 
-La lista completa se obtiene con `GET http://localhost:9001/get_font_types`.
-Fuentes recomendadas para contenido en español (latinas, bien legibles en reels):
+A lista completa é obtida com `GET http://localhost:9001/get_font_types`.
+Fontes recomendadas para conteúdo em espanhol (latinas, bem legíveis em reels):
 
-| Uso | Fuente |
+| Uso | Fonte |
 |---|---|
-| Título / palabra bold | `Poppins_Bold`, `Sora_Bold`, `Inter_Black`, `Kanit_Black` |
+| Título / palavra bold | `Poppins_Bold`, `Sora_Bold`, `Inter_Black`, `Kanit_Black` |
 | Subtítulo / body | `Poppins_Regular`, `Sora_Regular`, `Nunito` |
 | Display / impacto | `Thunder`, `Staatliches_Regular`, `Bungee_Regular` |
 
-`Montserrat-Bold` **no está soportada** por la API — usar `Poppins_Bold` como equivalente.
+`Montserrat-Bold` **não é suportada** pela API — usar `Poppins_Bold` como equivalente.
 
-### Animaciones disponibles (`animation_in`)
+### Animações disponíveis (`animation_in`)
 
-Definidas en `src/presets/animations.ts`.
+Definidas em `src/presets/animations.ts`.
 
-| Nombre | Descripción | Duración |
+| Nome | Descrição | Duração |
 |---|---|---|
-| `popInUpper` | Cae desde ligeramente arriba (offset +0.05) con fade in | 13 frames (≈433 ms a 30 fps) |
+| `popInUpper` | Cai de um pouco acima (offset +0.05) com fade in | 13 frames (≈433 ms a 30 fps) |
 
-**Dirección**: en el espacio de keyframes de CapCut, el eje Y positivo apunta hacia ARRIBA en
-pantalla. El offset `+0.05` hace que el elemento empiece 0.05 unidades más arriba y "caiga" a
-su posición final — efecto de entrada descendente suave.
+**Direção**: no espaço de keyframes do CapCut, o eixo Y positivo aponta para CIMA na
+tela. O offset `+0.05` faz o elemento começar 0.05 unidades mais acima e "cair" até
+sua posição final — efeito de entrada descendente suave.
 
-Si el usuario no especifica animación, aplicar `popInUpper` por defecto para texto principal.
+Se o usuário não especificar animação, aplicar `popInUpper` por padrão para o texto principal.
 
-### Parámetros por defecto para talking head
+### Parâmetros padrão para talking head
 
-| Parámetro | Valor | Motivo |
+| Parâmetro | Valor | Motivo |
 |---|---|---|
-| `position_x` | `0.5` | Centrado horizontal |
-| `position_y` | `0.85` | Texto animado principal (near top); subtítulos → usar `0.10` |
-| `start` / `end` | según timing del clip indicado | — |
+| `position_x` | `0.5` | Centralizado horizontalmente |
+| `position_y` | `0.85` | Texto animado principal (próximo ao topo); legendas → usar `0.10` |
+| `start` / `end` | conforme o timing do clipe indicado | — |
 
-**Convención Y**: `0 = fondo de pantalla`, `1 = tope de pantalla` (positivo = hacia arriba).
+**Convenção do eixo Y**: `0 = fundo da tela`, `1 = topo da tela` (positivo = para cima).
 
 ---
 
-## Python utilities (`utils_py/`)
+## Utilitários Python (`utils_py/`)
 
-Scripts auxiliares que se llaman desde Claude Code con el Python del sistema
+Scripts auxiliares chamados a partir do Claude Code com o Python do sistema
 (`/c/Users/Migue/AppData/Local/Programs/Python/Python311/python`).
-Siempre ejecutar con `PYTHONUTF8=1` para evitar errores de encoding en Windows.
+Sempre executar com `PYTHONUTF8=1` para evitar erros de encoding no Windows.
 
 ### `transcribe_audio.py`
 
-Transcribe un archivo de audio/video con Whisper y retorna una lista JSON de palabras con
-timestamps. Aplica corrección automática de solapamientos: si `word[i].start < word[i-1].end`,
+Transcreve um arquivo de áudio/vídeo com Whisper e retorna uma lista JSON de palavras com
+timestamps. Aplica correção automática de sobreposições: se `word[i].start < word[i-1].end`,
 ajusta `word[i].start = word[i-1].end + 0.01`.
 
 ```bash
 python utils_py/transcribe_audio.py "path/to/video.mov" --lang es --model base
-# Output: [{ "word": "...", "start": 0.44, "end": 0.88 }, ...]
+# Saída: [{ "word": "...", "start": 0.44, "end": 0.88 }, ...]
 ```
 
-Modelos disponibles: `tiny` | `base` | `small` | `medium` | `large`
+Modelos disponíveis: `tiny` | `base` | `small` | `medium` | `large`
 
 ### `inspect_draft.py`
 
-Lee un `draft_content.json` de CapCut y extrae `audio_path`, `duration_sec` y `fps`.
+Lê um `draft_content.json` do CapCut e extrai `audio_path`, `duration_sec` e `fps`.
 
 ```bash
 python utils_py/inspect_draft.py "path/to/draft_content.json"
@@ -214,62 +214,62 @@ python utils_py/inspect_draft.py "path/to/draft_content.json"
 
 ### `validate_project.py`
 
-Verifica que todos los archivos de media referenciados en el draft existan en disco.
+Verifica se todos os arquivos de mídia referenciados no draft existem em disco.
 
 ```bash
 python utils_py/validate_project.py "path/to/draft_content.json"
-# Output: { "valid": true/false, "missing": [...] }
+# Saída: { "valid": true/false, "missing": [...] }
 ```
 
 ### `group_words.py`
 
-Agrupa una lista de palabras con timestamps en frases/subtítulos completos. Rompe la frase
-cuando se supera el máximo de caracteres, hay una pausa larga, o la palabra termina con `.?!…`.
+Agrupa uma lista de palavras com timestamps em frases/legendas completas. Quebra a frase
+quando o máximo de caracteres é excedido, há uma pausa longa, ou a palavra termina com `.?!…`.
 
 ```bash
 python utils_py/group_words.py words.json --max-chars 35 --max-gap 0.5
-# Input:  [{"word":"Hola","start":0.5,"end":0.8}, {"word":"mundo","start":0.8,"end":1.2}]
-# Output: [{"text":"Hola mundo","start":0.5,"end":1.2}]
+# Entrada:  [{"word":"Hola","start":0.5,"end":0.8}, {"word":"mundo","start":0.8,"end":1.2}]
+# Saída: [{"text":"Hola mundo","start":0.5,"end":1.2}]
 ```
 
-Parámetros:
-- `--max-chars` (default: 35) — máximo de caracteres por frase
-- `--max-gap` (default: 0.5s) — pausa máxima para mantener palabras en la misma frase
+Parâmetros:
+- `--max-chars` (padrão: 35) — máximo de caracteres por frase
+- `--max-gap` (padrão: 0.5s) — pausa máxima para manter palavras na mesma frase
 
 ### `calc_subtitle_y.py`
 
-Agrupa palabras en frases y asigna un `position_y` específico a cada frase según su
-número estimado de líneas visuales. Usa internamente `group_words`.
+Agrupa palavras em frases e atribui um `position_y` específico a cada frase de acordo com o
+número estimado de linhas visuais. Usa internamente o `group_words`.
 
-**Convención de ejes**: `0 = fondo de pantalla`, `1 = tope`. Valores bajos = más abajo.
+**Convenção dos eixos**: `0 = fundo da tela`, `1 = topo`. Valores baixos = mais para baixo.
 
 ```bash
 python utils_py/calc_subtitle_y.py words.json --base_y 0.10
-# Output: [{"text":"Compramos la Mazda","start":0.58,"end":2.3,"position_y":0.16}, ...]
+# Saída: [{"text":"Compramos la Mazda","start":0.58,"end":2.3,"position_y":0.16}, ...]
 ```
 
-Parámetros:
-- `--base_y` (default: 0.10) — Y del centro de una frase de 1 línea
-- `--line_height` (default: 0.06) — unidades Y por línea adicional
-- `--chars_per_line` (default: 20) — caracteres estimados por línea visual (~3 palabras)
-- `--max-chars` (default: 35) — máx caracteres por frase
-- `--max-gap` (default: 0.5s) — pausa máxima para mantener palabras juntas
+Parâmetros:
+- `--base_y` (padrão: 0.10) — Y do centro de uma frase de 1 linha
+- `--line_height` (padrão: 0.06) — unidades Y por linha adicional
+- `--chars_per_line` (padrão: 20) — caracteres estimados por linha visual (~3 palavras)
+- `--max-chars` (padrão: 35) — máx. caracteres por frase
+- `--max-gap` (padrão: 0.5s) — pausa máxima para manter palavras juntas
 
 **Fórmula**: `position_y = base_y + (n_lines − 1) × line_height`
-→ frases de 2 líneas suben el centro para que el borde inferior quede en `base_y`.
+→ frases de 2 linhas sobem o centro para que a borda inferior fique em `base_y`.
 
-Este módulo es **importado automáticamente** por `edit_draft_pipeline.py` cuando se
-usa el modo `--no-word-by-word --no-buildup` (modo frases). No es necesario llamarlo directamente.
+Este módulo é **importado automaticamente** por `edit_draft_pipeline.py` quando se
+usa o modo `--no-word-by-word --no-buildup` (modo frases). Não é necessário chamá-lo diretamente.
 
 ### `edit_draft_pipeline.py` ⭐ script principal
 
-Pipeline unificado con llamadas API **paralelas** (ThreadPoolExecutor, 8 workers).
-Hace todo en una sola ejecución: preparar entradas → crear draft temp →
-agregar elementos en paralelo → merge en draft existente.
+Pipeline unificado com chamadas de API **paralelas** (ThreadPoolExecutor, 8 workers).
+Faz tudo numa única execução: prepara entradas → cria draft temporário →
+adiciona elementos em paralelo → mescla no draft existente.
 
-**Modos disponibles**:
-- `--word-by-word` (default) — una palabra por elemento, centrada, `position_y` fijo
-- `--no-word-by-word --no-buildup` — una frase completa por elemento, `position_y` ajustado por líneas
+**Modos disponíveis**:
+- `--word-by-word` (padrão) — uma palavra por elemento, centralizada, `position_y` fixo
+- `--no-word-by-word --no-buildup` — uma frase completa por elemento, `position_y` ajustado por linhas
 - `--no-word-by-word --buildup` — layout horizontal acumulativo por frase (legado)
 
 ```bash
@@ -278,25 +278,25 @@ python utils_py/edit_draft_pipeline.py \
   --words words.json \
   --style defaultTypeWhite --animation popInUpper \
   --position_y 0.10
-# Output: {"entries_added":25,"source_words":25,"text_tracks_merged":25,"mode":"word_by_word",...}
+# Saída: {"entries_added":25,"source_words":25,"text_tracks_merged":25,"mode":"word_by_word",...}
 ```
 
-Archivos temporales: usar siempre `C:/smart_cut/tmp/` como directorio intermedio.
+Arquivos temporários: usar sempre `C:/smart_cut/tmp/` como diretório intermediário.
 
-**`VECTCUT_DRAFT_DIR`**: el backend (VectCutAPI) guarda los drafts temporales en su propio
-directorio de trabajo. El default es `C:/capcut_project/capcut-mcp-back` (carpeta del backend).
-Si el backend se corre desde otra ruta, pasar `VECTCUT_DRAFT_DIR=<ruta>` como variable de entorno.
+**`VECTCUT_DRAFT_DIR`**: o backend (VectCutAPI) salva os drafts temporários no seu próprio
+diretório de trabalho. O padrão é `C:/capcut_project/capcut-mcp-back` (pasta do backend).
+Se o backend for executado de outro caminho, passar `VECTCUT_DRAFT_DIR=<caminho>` como variável de ambiente.
 
-**Rendimiento**: para 25 palabras hace ~75 llamadas API en paralelo.
-Tiempo estimado: 3-6s.
+**Desempenho**: para 25 palavras, faz ~75 chamadas de API em paralelo.
+Tempo estimado: 3-6s.
 
 ### `add_words_to_draft.py`
 
-Agrega subtítulos de palabras o frases directamente a un `draft_content.json` EXISTENTE, sin
-crear un nuevo proyecto. Usa VectCutAPI para generar los elementos de texto y luego hace un
-merge del JSON resultante al draft original.
+Adiciona legendas de palavras ou frases diretamente a um `draft_content.json` EXISTENTE, sem
+criar um novo projeto. Usa o VectCutAPI para gerar os elementos de texto e depois faz um
+merge do JSON resultante no draft original.
 
-**Ventaja**: preserva todos los tracks existentes (video, B-roll, audio, efectos).
+**Vantagem**: preserva todas as faixas existentes (vídeo, B-roll, áudio, efeitos).
 
 ```bash
 python utils_py/add_words_to_draft.py \
@@ -306,32 +306,32 @@ python utils_py/add_words_to_draft.py \
   --animation popInUpper \
   --position_x 0.5 \
   --position_y 0.85
-# Output: {"temp_draft_id":"...","entries_added":25,"text_tracks_merged":25,...}
+# Saída: {"temp_draft_id":"...","entries_added":25,"text_tracks_merged":25,...}
 ```
 
-También acepta frases (clave `"text"` en lugar de `"word"`):
+Também aceita frases (chave `"text"` em vez de `"word"`):
 ```bash
 python utils_py/group_words.py words.json | python utils_py/add_words_to_draft.py \
   --draft "C:/path/to/draft_content.json" --words -
 ```
-*(pasar `-` como `--words` no está implementado; guardar a archivo intermedio primero)*
+*(passar `-` como `--words` não está implementado; salvar em arquivo intermediário primeiro)*
 
-Crea backup automático en `draft_content.json.bak_words` (solo si no existe).
+Cria backup automático em `draft_content.json.bak_words` (apenas se não existir).
 
 ---
 
-## Flujo típico: subtítulos sobre proyecto EXISTENTE
+## Fluxo típico: legendas sobre projeto EXISTENTE
 
-Para agregar subtítulos a un proyecto CapCut ya existente (preservando B-roll, efectos, etc.):
+Para adicionar legendas a um projeto CapCut já existente (preservando B-roll, efeitos, etc.):
 
 ```bash
-# 1. Transcribir audio
+# 1. Transcrever áudio
 python utils_py/transcribe_audio.py "video.mov" --lang es --model medium
 
-# 2. Agrupar palabras en frases (opcional, recomendado)
+# 2. Agrupar palavras em frases (opcional, recomendado)
 python utils_py/group_words.py words.json --max-chars 35 > phrases.json
 
-# 3. Agregar al draft existente
+# 3. Adicionar ao draft existente
 python utils_py/add_words_to_draft.py \
   --draft "C:/Users/.../draft_content.json" \
   --words phrases.json \
@@ -339,57 +339,57 @@ python utils_py/add_words_to_draft.py \
   --animation popInUpper
 ```
 
-## Flujo alternativo: draft completo nuevo
+## Fluxo alternativo: draft completo novo
 
-El tool `capcut_edit_draft_words` ejecuta el pipeline completo en una sola llamada
-(crea un proyecto NUEVO, útil cuando no existe draft previo):
+A ferramenta `capcut_edit_draft_words` executa o pipeline completo numa única chamada
+(cria um projeto NOVO, útil quando não existe draft anterior):
 
-1. `POST /create_draft` — crea draft 1080×1920 al fps indicado
-2. `POST /add_video` — agrega el video principal (full duration)
-3. `POST /add_text` × N + `POST /add_keyframe` × N — una entrada por llamada con animación
-4. `POST /save_draft` — guarda; luego `publishDraftToCapcut()` lo copia a la carpeta de CapCut
+1. `POST /create_draft` — cria draft 1080×1920 no fps indicado
+2. `POST /add_video` — adiciona o vídeo principal (duração completa)
+3. `POST /add_text` × N + `POST /add_keyframe` × N — uma entrada por chamada com animação
+4. `POST /save_draft` — salva; depois `publishDraftToCapcut()` copia para a pasta do CapCut
 
-**Nota**: timestamps solapados en la transcripción de Whisper causan error `New segment overlaps`.
-El script ya los corrige automáticamente, pero si se construye la lista manualmente, asegurarse
-de que `word[i].start >= word[i-1].end`.
+**Nota**: timestamps sobrepostos na transcrição do Whisper causam o erro `New segment overlaps`.
+O script já os corrige automaticamente, mas se a lista for construída manualmente, garantir
+que `word[i].start >= word[i-1].end`.
 
 ---
 
 ## Roadmap
 
-### FASE 1 — Parametric typography system ✅
-`src/presets/typography.ts` — tres estilos base (`defaultTypeWhite`, `defaultTypeBlack`,
-`defaultTypeRed`), todos con `Poppins_Bold`, font_size 15, configurables en color/stroke/shadow.
+### FASE 1 — Sistema de tipografia parametrizado ✅
+`src/presets/typography.ts` — três estilos base (`defaultTypeWhite`, `defaultTypeBlack`,
+`defaultTypeRed`), todos com `Poppins_Bold`, font_size 15, configuráveis em cor/stroke/shadow.
 
-### FASE 2 — Animation library ✅
-`src/presets/animations.ts` — `popInUpper`: cae desde ligeramente arriba (offset +0.05) con
-fade in. Dirección corregida: en keyframe space CapCut, y positivo = más alto en pantalla.
-`resolveKeyframes()` convierte la definición en llamadas a `apiClient.addKeyframe`.
+### FASE 2 — Biblioteca de animações ✅
+`src/presets/animations.ts` — `popInUpper`: cai de um pouco acima (offset +0.05) com
+fade in. Direção corrigida: no espaço de keyframe do CapCut, y positivo = mais alto na tela.
+`resolveKeyframes()` converte a definição em chamadas para `apiClient.addKeyframe`.
 
-### FASE 3 — Word-by-word pipeline tool ✅
-`capcut_edit_draft_words` en `src/tools/index.ts` — pipeline completo: crea draft, agrega
-video, agrega cada entrada como texto animado, guarda y publica a CapCut vía `publishDraftToCapcut()`.
-`utils_py/edit_draft_pipeline.py` — modo por defecto `--word-by-word`: una palabra por elemento,
-centrada, sin agrupación. Modos alternativos: `--no-word-by-word --no-buildup` (frases),
+### FASE 3 — Ferramenta de pipeline palavra por palavra ✅
+`capcut_edit_draft_words` em `src/tools/index.ts` — pipeline completo: cria draft, adiciona
+vídeo, adiciona cada entrada como texto animado, salva e publica no CapCut via `publishDraftToCapcut()`.
+`utils_py/edit_draft_pipeline.py` — modo padrão `--word-by-word`: uma palavra por elemento,
+centralizada, sem agrupamento. Modos alternativos: `--no-word-by-word --no-buildup` (frases),
 `--no-word-by-word --buildup` (layout acumulativo legado).
-`utils_py/add_words_to_draft.py` — agrega subtítulos a un proyecto existente (merge directo).
+`utils_py/add_words_to_draft.py` — adiciona legendas a um projeto existente (merge direto).
 
-### FASE 4 — Enhanced subtitle tool
-Extender `capcut_add_subtitle` para soportar:
+### FASE 4 — Ferramenta de legendas aprimorada
+Estender `capcut_add_subtitle` para suportar:
 - Estilos predefinidos: `"reels"`, `"youtube"`, `"minimal"`, `"bold"`
-- `word_highlight` — resaltar palabras clave en otro color
+- `word_highlight` — destacar palavras-chave em outra cor
 - `auto_position` — `"top"` | `"center"` | `"bottom"`
 
-### FASE 5 — Validation & utilities
+### FASE 5 — Validação e utilitários
 `src/utils/validators.ts`:
-- Validar que `video_path` exista antes de enviar a la API
-- Validar que `draft_folder` sea una ruta válida de CapCut
-- Helper para convertir rutas Windows ↔ Unix
+- Validar que `video_path` exista antes de enviar à API
+- Validar que `draft_folder` seja um caminho válido do CapCut
+- Helper para converter caminhos Windows ↔ Unix
 
 ---
 
-## Do Not Touch (for now)
+## Não tocar (por agora)
 
-- `src/index.ts` — stable entry point
-- `src/services/api-client.ts` — functional API client
-- The 13 existing tools — extend only, never modify existing behavior
+- `src/index.ts` — ponto de entrada estável
+- `src/services/api-client.ts` — cliente de API funcional
+- As 13 ferramentas existentes — estender apenas, nunca modificar o comportamento existente

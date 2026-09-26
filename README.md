@@ -1,42 +1,42 @@
 # CapCut MCP Server — Extended
 
-An extended MCP (Model Context Protocol) server for automating 
-CapCut video editing through Claude Code. Supports parametrized 
-typography, animation presets, and full talking-head production workflows.
+Um servidor MCP (Model Context Protocol) estendido para automatizar
+a edição de vídeo no CapCut através do Claude Code. Suporta tipografia
+parametrizada, presets de animação e fluxos completos de produção talking-head.
 
-## Based on
+## Baseado em
 
-This project is a fork and extension of 
-[capcut-mcp-server](https://github.com/atx-guy/capcut-mcp-server) 
-by [@atx-guy](https://github.com/atx-guy), licensed under MIT.
+Este projeto é um fork e extensão do
+[capcut-mcp-server](https://github.com/atx-guy/capcut-mcp-server)
+de [@atx-guy](https://github.com/atx-guy), licenciado sob MIT.
 
-All original tools have been preserved and extended with:
-- Parametrized typography system (font, size, position, color)
-- Animation presets library
-- Talking head production preset
-- Reels/Shorts workflow preset
-- Subtitle style system
+Todas as ferramentas originais foram preservadas e estendidas com:
+- Sistema de tipografia parametrizado (fonte, tamanho, posição, cor)
+- Biblioteca de presets de animação
+- Preset de produção talking head
+- Preset de fluxo Reels/Shorts
+- Sistema de estilos de legenda
 
-## Tools
+## Ferramentas
 
-| Tool | Description |
+| Ferramenta | Descrição |
 |------|-------------|
-| `capcut_create_draft` | Create a new project with custom dimensions and fps |
-| `capcut_add_video` | Add video clip with timing, transitions and speed |
-| `capcut_add_audio` | Add audio with volume and fade effects |
-| `capcut_add_text` | Add styled text with fonts, colors and animations |
-| `capcut_add_subtitle` | Import SRT subtitles with custom styling |
-| `capcut_add_effect` | Apply visual effects |
-| `capcut_save_draft` | Save project to CapCut drafts folder |
-| `capcut_talking_head` | Full talking head preset (one command) |
+| `capcut_create_draft` | Cria um novo projeto com dimensões e fps customizados |
+| `capcut_add_video` | Adiciona clipe de vídeo com timing, transições e velocidade |
+| `capcut_add_audio` | Adiciona áudio com volume e efeitos de fade |
+| `capcut_add_text` | Adiciona texto estilizado com fontes, cores e animações |
+| `capcut_add_subtitle` | Importa legendas SRT com estilo customizado |
+| `capcut_add_effect` | Aplica efeitos visuais |
+| `capcut_save_draft` | Salva o projeto na pasta de drafts do CapCut |
+| `capcut_talking_head` | Preset completo de talking head (um único comando) |
 
-## Requirements
+## Requisitos
 
 - Node.js 18+
 - Claude Code
-- CapCut (Windows or Mac)
+- CapCut (Windows ou Mac)
 
-## Installation
+## Instalação
 ```bash
 git clone https://github.com/TU_USUARIO/capcut-mcp-server-pro
 cd capcut-mcp-server-pro
@@ -45,75 +45,75 @@ npm run build
 claude mcp add capcut -- node /ruta/dist/index.js
 ```
 
-## Usage
+## Uso
 ```bash
 claude
 > Crea un proyecto talking head con el video en C:/grabacion.mp4, 
   subtítulos en blanco, fuente Montserrat 72px, y guárdalo en CapCut
 ```
 
-## License
+## Licença
 
-MIT — see [LICENSE](LICENSE)
+MIT — veja [LICENSE](LICENSE)
 
 # CapCut MCP Server
 
-A professional Model Context Protocol (MCP) server for **CapCut Pro** video editing automation. This server enables AI assistants and applications to create and edit videos programmatically through CapCut's powerful editing capabilities.
+Um servidor Model Context Protocol (MCP) profissional para automação de edição de vídeo no **CapCut Pro**. Este servidor permite que assistentes de IA e aplicações criem e editem vídeos programaticamente usando os recursos de edição do CapCut.
 
-## 🎬 Features
+## 🎬 Funcionalidades
 
-- **Complete Video Editing Suite**: Create drafts, add videos, audio, text, images, effects, and more
-- **Professional Tools**: 11 specialized tools for video production workflows
-- **Type-Safe**: Built with TypeScript for reliability and excellent IDE support
-- **Flexible Transport**: Supports both stdio (local) and HTTP (remote) connections
-- **Input Validation**: Comprehensive Zod schemas with helpful error messages
-- **Dual Output Formats**: JSON for machines, Markdown for humans
+- **Suíte Completa de Edição de Vídeo**: Cria drafts, adiciona vídeos, áudios, textos, imagens, efeitos e mais
+- **Ferramentas Profissionais**: 11 ferramentas especializadas para fluxos de produção de vídeo
+- **Type-Safe**: Construído com TypeScript para confiabilidade e excelente suporte de IDE
+- **Transporte Flexível**: Suporta conexões tanto stdio (local) quanto HTTP (remota)
+- **Validação de Entrada**: Schemas Zod completos com mensagens de erro úteis
+- **Formatos de Saída Duplos**: JSON para máquinas, Markdown para humanos
 
-## 📋 Prerequisites
+## 📋 Pré-requisitos
 
-Before using this MCP server, you need to have the **VectCutAPI** (CapCut API server) running:
+Antes de usar este servidor MCP, é necessário ter o **VectCutAPI** (servidor de API do CapCut) em execução:
 
-1. **Install VectCutAPI**:
+1. **Instalar o VectCutAPI**:
    ```bash
    git clone https://github.com/sun-guannan/VectCutAPI.git
    cd VectCutAPI
    pip install -r requirements.txt
    ```
 
-2. **Start the API Server**:
+2. **Iniciar o Servidor de API**:
    ```bash
    python capcut_server.py
    ```
-   The server will start on `http://localhost:9001` by default.
+   O servidor iniciará em `http://localhost:9001` por padrão.
 
-## 🚀 Installation
+## 🚀 Instalação
 
-### Option 1: Install from npm (once published)
+### Opção 1: Instalar via npm (quando publicado)
 ```bash
 npm install -g capcut-mcp-server
 ```
 
-### Option 2: Build from Source
+### Opção 2: Compilar a partir do código-fonte
 ```bash
-# Clone this repository
+# Clonar este repositório
 git clone <your-repo-url>
 cd capcut-mcp-server
 
-# Install dependencies
+# Instalar dependências
 npm install
 
-# Build the project
+# Compilar o projeto
 npm run build
 
-# Test the server
+# Testar o servidor
 npm start
 ```
 
-## 🔧 Configuration
+## 🔧 Configuração
 
-### For Claude Desktop
+### Para o Claude Desktop
 
-Add to your Claude Desktop config file:
+Adicione ao arquivo de configuração do Claude Desktop:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -132,26 +132,26 @@ Add to your Claude Desktop config file:
 }
 ```
 
-### For Other MCP Clients
+### Para outros clientes MCP
 
-The server supports two transport modes:
+O servidor suporta dois modos de transporte:
 
-#### Stdio Mode (Default - Local Integration)
+#### Modo Stdio (Padrão - Integração Local)
 ```bash
 node dist/index.js
 ```
 
-#### HTTP Mode (Remote Access)
+#### Modo HTTP (Acesso Remoto)
 ```bash
 TRANSPORT=http PORT=3000 node dist/index.js
 ```
 
-## 🛠️ Available Tools
+## 🛠️ Ferramentas Disponíveis
 
 ### 1. `capcut_create_draft`
-Create a new video editing project with custom dimensions and frame rate.
+Cria um novo projeto de edição de vídeo com dimensões e taxa de quadros customizadas.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "width": 1920,
@@ -161,9 +161,9 @@ Create a new video editing project with custom dimensions and frame rate.
 ```
 
 ### 2. `capcut_add_video`
-Add video clips with transitions, speed control, and volume adjustments.
+Adiciona clipes de vídeo com transições, controle de velocidade e ajustes de volume.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -177,9 +177,9 @@ Add video clips with transitions, speed control, and volume adjustments.
 ```
 
 ### 3. `capcut_add_audio`
-Add background music or sound effects with fade in/out.
+Adiciona música de fundo ou efeitos sonoros com fade in/out.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -193,9 +193,9 @@ Add background music or sound effects with fade in/out.
 ```
 
 ### 4. `capcut_add_text`
-Add styled text overlays with animations, shadows, and backgrounds.
+Adiciona sobreposições de texto estilizado com animações, sombras e fundos.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -211,9 +211,9 @@ Add styled text overlays with animations, shadows, and backgrounds.
 ```
 
 ### 5. `capcut_add_image`
-Add image overlays with positioning, scaling, and rotation.
+Adiciona sobreposições de imagem com posicionamento, escala e rotação.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -227,9 +227,9 @@ Add image overlays with positioning, scaling, and rotation.
 ```
 
 ### 6. `capcut_add_subtitle`
-Import subtitles from SRT format with custom styling.
+Importa legendas em formato SRT com estilo customizado.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -241,9 +241,9 @@ Import subtitles from SRT format with custom styling.
 ```
 
 ### 7. `capcut_add_keyframe`
-Create smooth animations using keyframe interpolation.
+Cria animações suaves usando interpolação por keyframe.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -255,9 +255,9 @@ Create smooth animations using keyframe interpolation.
 ```
 
 ### 8. `capcut_add_effect`
-Apply visual effects like blur, brightness, saturation, etc.
+Aplica efeitos visuais como blur, brilho, saturação, etc.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -269,9 +269,9 @@ Apply visual effects like blur, brightness, saturation, etc.
 ```
 
 ### 9. `capcut_add_sticker`
-Add decorative stickers or emojis.
+Adiciona stickers decorativos ou emojis.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123",
@@ -285,9 +285,9 @@ Add decorative stickers or emojis.
 ```
 
 ### 10. `capcut_save_draft`
-Save the draft to import into CapCut application.
+Salva o draft para importar na aplicação do CapCut.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "draft_id": "abc123"
@@ -295,28 +295,28 @@ Save the draft to import into CapCut application.
 ```
 
 ### 11. `capcut_get_duration`
-Get duration and metadata of media files.
+Obtém a duração e os metadados de arquivos de mídia.
 
-**Example**:
+**Exemplo**:
 ```typescript
 {
   "url": "https://example.com/video.mp4"
 }
 ```
 
-## 📖 Usage Examples
+## 📖 Exemplos de Uso
 
-### Complete Video Creation Workflow
+### Fluxo Completo de Criação de Vídeo
 
 ```typescript
-// 1. Create a new draft
+// 1. Criar um novo draft
 const draft = await capcut_create_draft({
   width: 1920,
   height: 1080,
   fps: 30
 });
 
-// 2. Add background video
+// 2. Adicionar vídeo de fundo
 await capcut_add_video({
   draft_id: draft.draft_id,
   video_url: "https://example.com/background.mp4",
@@ -325,7 +325,7 @@ await capcut_add_video({
   volume: 0.6
 });
 
-// 3. Add title text
+// 3. Adicionar texto de título
 await capcut_add_text({
   draft_id: draft.draft_id,
   text: "Amazing Video",
@@ -335,7 +335,7 @@ await capcut_add_text({
   animation: "fade_in"
 });
 
-// 4. Add background music
+// 4. Adicionar música de fundo
 await capcut_add_audio({
   draft_id: draft.draft_id,
   audio_url: "https://example.com/music.mp3",
@@ -344,7 +344,7 @@ await capcut_add_audio({
   volume: 0.5
 });
 
-// 5. Add zoom animation
+// 5. Adicionar animação de zoom
 await capcut_add_keyframe({
   draft_id: draft.draft_id,
   track_name: "main",
@@ -353,7 +353,7 @@ await capcut_add_keyframe({
   values: ["1.0", "1.2", "1.0"]
 });
 
-// 6. Save the draft
+// 6. Salvar o draft
 const result = await capcut_save_draft({
   draft_id: draft.draft_id
 });
@@ -361,55 +361,55 @@ const result = await capcut_save_draft({
 console.log(`Draft saved to: ${result.draft_url}`);
 ```
 
-## 🎯 Use Cases
+## 🎯 Casos de Uso
 
-- **AI-Powered Video Generation**: Let AI assistants create complete video projects
-- **Batch Video Production**: Automate creation of multiple videos from templates
-- **Social Media Content**: Generate TikTok, Reels, and YouTube Shorts automatically
-- **Educational Content**: Create tutorial videos with synchronized text and audio
-- **Marketing Automation**: Generate promotional videos at scale
+- **Geração de Vídeo com IA**: Permite que assistentes de IA criem projetos de vídeo completos
+- **Produção de Vídeo em Lote**: Automatiza a criação de múltiplos vídeos a partir de templates
+- **Conteúdo para Redes Sociais**: Gera TikTok, Reels e YouTube Shorts automaticamente
+- **Conteúdo Educacional**: Cria vídeos tutoriais com texto e áudio sincronizados
+- **Automação de Marketing**: Gera vídeos promocionais em escala
 
-## 🔍 Troubleshooting
+## 🔍 Solução de Problemas
 
-### Server Not Responding
-- Ensure VectCutAPI server is running on port 9001
-- Check `CAPCUT_API_URL` environment variable is correct
-- Verify network connectivity to the API server
+### Servidor Não Responde
+- Confirme que o servidor VectCutAPI está em execução na porta 9001
+- Verifique se a variável de ambiente `CAPCUT_API_URL` está correta
+- Verifique a conectividade de rede com o servidor de API
 
-### Build Errors
+### Erros de Build
 ```bash
-# Clean and rebuild
+# Limpar e recompilar
 rm -rf dist node_modules package-lock.json
 npm install
 npm run build
 ```
 
-### Media Files Not Found
-- Ensure all media URLs are accessible
-- Use direct links to files (avoid redirects)
-- Check file format is supported
+### Arquivos de Mídia Não Encontrados
+- Confirme que todas as URLs de mídia estão acessíveis
+- Use links diretos para os arquivos (evite redirecionamentos)
+- Verifique se o formato do arquivo é suportado
 
-## 🤝 Contributing
+## 🤝 Contribuindo
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contribuições são bem-vindas! Sinta-se à vontade para enviar um Pull Request.
 
-## 📄 License
+## 📄 Licença
 
-MIT License - feel free to use this in your projects!
+Licença MIT - sinta-se à vontade para usar isto em seus projetos!
 
-## 🙏 Acknowledgments
+## 🙏 Agradecimentos
 
-- Built on top of [VectCutAPI](https://github.com/sun-guannan/VectCutAPI) by sun-guannan
-- Uses the [Model Context Protocol](https://modelcontextprotocol.io/) specification
-- Powered by [Anthropic's MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+- Construído sobre o [VectCutAPI](https://github.com/sun-guannan/VectCutAPI) por sun-guannan
+- Usa a especificação do [Model Context Protocol](https://modelcontextprotocol.io/)
+- Desenvolvido com o [Anthropic's MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 
-## 📞 Support
+## 📞 Suporte
 
-For issues related to:
-- **This MCP Server**: Open an issue in this repository
-- **VectCutAPI**: Visit https://github.com/sun-guannan/VectCutAPI
-- **CapCut Application**: Contact CapCut support
+Para problemas relacionados a:
+- **Este Servidor MCP**: Abra uma issue neste repositório
+- **VectCutAPI**: Visite https://github.com/sun-guannan/VectCutAPI
+- **Aplicação CapCut**: Contate o suporte do CapCut
 
 ---
 
-**Note**: This is an unofficial MCP server for CapCut Pro. It requires the VectCutAPI backend to function. CapCut is a trademark of Bytedance Ltd.
+**Nota**: Este é um servidor MCP não oficial para o CapCut Pro. Requer o backend VectCutAPI para funcionar. CapCut é uma marca registrada da Bytedance Ltd.
